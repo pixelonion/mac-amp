@@ -204,7 +204,8 @@ sed -i '' 's/^#\(LoadModule vhost_alias_module\)/\1/' $(brew --prefix)/etc/httpd
 sed -i '' 's/^#\(LoadModule macro_module\)/\1/' $(brew --prefix)/etc/httpd/httpd.conf
 ```
 
-Include ~/Sites/httpd-vhosts.conf
+Include ~/Sites/httpd-vhosts.conf  
+**Note that running this command more than once will create duplicate entries in your httpd.conf!**
 
 ```sh
 (export USERHOME=$(dscl . -read /Users/`whoami` NFSHomeDirectory | awk -F"\: " '{print $2}') ; cat >> $(brew --prefix)/etc/httpd/httpd.conf <<_EOF_
@@ -498,6 +499,12 @@ Finally, let's open the site in the browser. Retrace your steps above if it does
 ```sh
 open https://localhost/test/index.html
 ```
+
+#### Troubleshooting
+If there are syntax errors in the config files or permissions issues, brew may fail to start Apache. When it suggests to use sudo for more detail, **DO NOT**. Using sudo will make root take ownership of all related files, causing further permissions issues until manually undone.  
+If you want to see more information, you can stop the apache service e.g. `brew services stop httpd` and then
+- run `httpd` as a terminal command without brew services to see what errors cause startup failure
+- check the error logs in `~/Sites/logs/...` after a 403 Forbidden error on the webpage
 
 ## PHP & PHP-FPM
 
